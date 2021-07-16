@@ -2,14 +2,44 @@ package main
 
 import (
 	"fmt"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	var creditManager = CreditManager{
+	r := gin.Default()
+
+	r.POST("/credit-assigment", CreditAssignerHandler)
+
+	r.Run(":8080")
+}
+
+type InvestmentPayload struct {
+	Investment int32 `json:"investment"`
+}
+
+func CreditAssignerHandler(c *gin.Context) {
+	investmentPayload := new(InvestmentPayload)
+	err := c.BindJSON(&investmentPayload)
+	fmt.Println(investmentPayload)
+	if err != nil {
+		panic(err)
+	}
+	cm := CreditManager{
 		CreditLine:    []int32{700, 500, 300},
 		wasCalculated: make([]int32, 0),
 	}
-	fmt.Println(creditManager.CreditAssigner(6000))
+	ct300, ct500, ct700, err := cm.CreditAssigner(investmentPayload.Investment)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"credit_type_300": ct300,
+		"credit_type_500": ct500,
+		"credit_type_700": ct700,
+	})
 }
 
 type CreditManager struct {
