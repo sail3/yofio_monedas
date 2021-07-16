@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -17,7 +16,7 @@ func TestCreditAssignerStruct(t *testing.T) {
 		if err != nil {
 			t.Fatalf("error en la asignacion de de credito.")
 		}
-		fmt.Println(line300, line500, line700)
+
 		distribucionOntenida := (line300*300 + line500*500 + line700*700)
 		if distribucionOntenida != montoInversion {
 			t.Fatalf("error en el calculo de lineas de prestamo, se esperaba %d se tiene %d", montoInversion, distribucionOntenida)
